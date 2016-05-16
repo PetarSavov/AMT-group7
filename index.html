@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 	<meta charset="UTF-8" />
@@ -11,7 +11,118 @@
     </style>
 </head>
 <body>
-<script type="text/javascript" src="js/app.js"></script>
+<script type="text/javascript">
+	var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update });
+
+function preload() {
+
+    this.game.load.spritesheet('player', 'assets/boy.png', 37, 69);
+    this.game.load.tilemap('tilemap', 'assets/planet1.json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.image('tiles', 'assets/mapcollection2.png');
+    this.game.load.image('sky', 'assets/sky.png');
+
+}
+
+
+
+
+function create() {
+
+   //Start the Arcade Physics systems
+    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+ 
+    //Change the background colour
+    this.game.stage.backgroundColor = "#972b2b";
+    
+    this.starfield = game.add.tileSprite(0, 0, 800, 600, 'sky');
+
+
+    //Add the tilemap and tileset image. The first parameter in addTilesetImage
+    //is the name you gave the tilesheet when importing it into Tiled, the second
+    //is the key to the asset in Phaser
+    this.map = this.game.add.tilemap('tilemap');
+    this.map.addTilesetImage('mapcollection2', 'tiles');
+    this.map.addTilesetImage('backgroundimage', 'sky');
+
+
+    //Add both the background and ground layers
+
+    this.groundLayer = this.map.createLayer('BackgroundLayer');
+    this.cloudslayer = this.map.createLayer('CloudsLayer');
+    this.catfoodlayer = this.map.createLayer('CatFoodLayer');
+    this.groundLayer = this.map.createLayer('GroundLayer');
+
+    //Before you can use the collide function you need to set what tiles can collide
+    this.map.setCollisionBetween(1, 100, true, 'GroundLayer');
+ 
+    //Add the sprite to the game and enable arcade physics on it
+    this.sprite = this.game.add.sprite(50, this.game.world.centerY, 'player');
+    this.game.physics.arcade.enable(this.sprite);
+ 
+    //Change the world size to match the size of this layer
+    this.groundLayer.resizeWorld();
+ 
+    //Set some physics on the sprite
+    this.sprite.body.bounce.y = 0.2;
+    this.sprite.body.gravity.y = 1000;
+    this.sprite.body.gravity.x = 20;
+    this.sprite.body.velocity.x = 100;
+ 
+    //Create a running animation for the sprite and play it
+    this.sprite.animations.add('right', [5, 6, 7, 8], 10, true);
+    this.sprite.animations.play('right');
+ 
+    //Make the camera follow the sprite
+    this.game.camera.follow(this.sprite);
+ 
+    //Enable cursor keys so we can create some controls
+    this.cursors = this.game.input.keyboard.createCursorKeys();
+
+}
+
+
+
+function update(){
+	/*player.body.velocity.x = 0;
+
+    if (cursors.left.isDown)
+    {   
+        //  Move to the left
+        player.body.velocity.x = -150;
+
+        player.animations.play('left');
+    }
+    else if (cursors.right.isDown)
+    {
+        //  Move to the right
+        player.body.velocity.x = 150;
+
+        player.animations.play('right');
+    }
+    else
+    {
+        //  Stand still
+        player.animations.stop();
+
+        player.frame = 4;
+    }
+    
+    //  Allow the player to jump if they are touching the ground.
+    if (cursors.up.isDown && player.body.touching.down)
+    {
+        player.body.velocity.y = -350;
+    }*/
+
+     //Make the sprite collide with the ground layer
+    this.game.physics.arcade.collide(this.sprite, this.groundLayer);
+ 
+    //Make the sprite jump when the up key is pushed
+    if(this.cursors.up.isDown) {
+      this.sprite.body.velocity.y = -500;}
+}
+
+
+</script>
 
 </body>
 </html>
