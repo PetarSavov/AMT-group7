@@ -1,0 +1,247 @@
+{
+    "start": [{
+        "type": "image",
+        "overwrite": false,
+        "key": "button-start-game",
+        "url": "assets/images/button-start-game.png"
+    },
+    {
+        "type": "image",
+        "overwrite": false,
+        "key": "background",
+        "url": "assets/images/sky.png"
+    }],
+    "level1": [
+        {
+            "frameHeight": 0,
+            "margin": 0,
+            "frameWidth": 0,
+            "spacing": 0,
+            "frameMax": -1,
+            "type": "spritesheet",
+            "key": "alien sprite",
+            "url": "assets/images/alien sprite.png"
+        },
+        {
+            "frameHeight": 67,
+            "margin": 0,
+            "frameWidth": 37,
+            "spacing": 0,
+            "frameMax": -1,
+            "type": "spritesheet",
+            "key": "player",
+            "url": "assets/images/bobby.png"
+        },
+        {
+            "frameHeight": 83,
+            "margin": 0,
+            "frameWidth": 135,
+            "spacing": 0,
+            "frameMax": -1,
+            "type": "spritesheet",
+            "key": "bubble",
+            "url": "assets/images/bubble-talk-sprite.png"
+        },
+        {
+            "frameHeight": 0,
+            "margin": 0,
+            "frameWidth": 0,
+            "spacing": 0,
+            "frameMax": -1,
+            "type": "spritesheet",
+            "key": "cat",
+            "url": "assets/images/cat.png"
+        },
+        {
+            "frameHeight": 201,
+            "margin": 0,
+            "frameWidth": 129,
+            "spacing": 0,
+            "frameMax": -1,
+            "type": "spritesheet",
+            "key": "flying",
+            "url": "assets/images/spaceship-sprite.png"
+        },
+
+        {
+            "frameHeight": 112,
+            "margin": 0,
+            "frameWidth": 124,
+            "spacing": 0,
+            "frameMax": -1,
+            "type": "spritesheet",
+            "key": "teleport",
+            "url": "assets/images/teleport sprite.png"
+        },
+
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "bobby-dead",
+            "url": "assets/images/bobby-dead.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "bubble-talk",
+            "url": "assets/images/bubble-talk.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "bullet",
+            "url": "assets/images/bullet.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "catfood",
+            "url": "assets/images/catfood.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "cloud",
+            "url": "assets/images/cloud.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "cookie",
+            "url": "assets/images/cookie.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "ground",
+            "url": "assets/images/earth.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "firstaid",
+            "url": "assets/images/firstaid.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "mute",
+            "url": "assets/images/mute.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "obstacle",
+            "url": "assets/images/obstacle.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "sky",
+            "url": "assets/images/sky.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "spaceship-body",
+            "url": "assets/images/spaceship-body.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "spaceship-body2",
+            "url": "assets/images/spaceship-body2.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "brokenShip",
+            "url": "assets/images/spaceship-broken.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "spaceship-but",
+            "url": "assets/images/spaceship-but.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "spaceship",
+            "url": "assets/images/spaceship-on-ground.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "spaceship-top",
+            "url": "assets/images/spaceship-top.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "spaceship-window",
+            "url": "assets/images/spaceship-window.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "spaceship-wing",
+            "url": "assets/images/spaceship-wing.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "stone",
+            "url": "assets/images/stone.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "sunglasses",
+            "url": "assets/images/sunglasses.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "tree",
+            "url": "assets/images/tree-23.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "volume",
+            "url": "assets/images/volume.png"
+        },
+        {
+            "urls": [
+                "assets/audio/Launch.ogg",
+                "assets/audio/Launch.mp3"
+            ],
+            "autoDecode": true,
+            "type": "audio",
+            "key": "launch"
+        },
+        {
+            "urls": [
+                "assets/audio/Space.mp3",
+                "assets/audio/Space.ogg"
+            ],
+            "autoDecode": true,
+            "type": "audio",
+            "key": "audio"
+        }
+    ],
+    "preload": [{
+        "type": "image",
+        "overwrite": false,
+        "key": "loading",
+        "url": "assets/images/loading.gif"
+    },
+    {
+        "type": "image",
+        "overwrite": false,
+        "key": "background",
+        "url": "assets/images/sky.png"
+    }],
+    "level2": []
+}
