@@ -28,6 +28,7 @@ var cookies;
 var speed = 150;
 var soundIcon;
 var textBubble;
+var launch;
 var count = 0;
 var parts = 6;
 
@@ -380,7 +381,7 @@ Level1.prototype.talkBubble = function(player, item){
     	textBubble.visible = true;
     	partsText.visible = true;     
      	textBubble.animations.play('talk');
-    	this.time.events.add(Phaser.Timer.SECOND * 12, this.removeBubble, this);
+    	textBubble.animations.currentAnim.onComplete.add(this.removeBubble, this);
     }
     else if(parts==0 && count !=0){
         textBubble.visible = true;
@@ -410,16 +411,22 @@ Level1.prototype.spaceshipLiftOff = function(){
         this.physics.arcade.enable(ship);
         ship.animations.add('liftof',[0, 1, 2], 5, true);
         ship.animations.play('liftof');
-        var launch = this.add.audio('launch');
+        launch = this.add.audio('launch');
         launch.play();
 
         ship.body.velocity.y = -50;
         ship.body.collideWorldBounds = false;
 
-        var temp = this.add.text(2000, 250,'LEVEL COMPLETE');      
+   //     var temp = this.add.text(2000, 250,'LEVEL COMPLETE');
+        this.time.events.add(Phaser.Timer.SECOND * 9, this.quitGame, this);      
 };
 
 Level1.prototype.teleportPlayer = function(player){
 	player.body.x = 1750;
     player.body.y = 0;
+};
+
+Level1.prototype.quitGame = function() {
+    music.stop();
+    this.game.state.start("level2");
 }

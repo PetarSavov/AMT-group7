@@ -11,7 +11,8 @@ Menu.prototype = proto;
 
 Menu.prototype.preload = function() {
 	this.load.pack("start", "assets/assets.json");
-		this.load.pack("level1", "assets/assets.json");
+	this.load.pack("level1", "assets/assets.json");
+	this.load.pack("level2", "assets/assets.json");
 };
 
 Menu.prototype.create = function() {

@@ -6,11 +6,11 @@ window.onload = function() {
 
 	// Add the States your game has.
 	game.state.add("Boot", Boot);
-		game.state.add("Preload", Preload);
+	game.state.add("Preload", Preload);
 	game.state.add("Menu", Menu);
 
 	game.state.add("Level1", Level1);
-//	game.state.add("Level2", Level2);
+	game.state.add("level2", level2);
 
 	// Now start the Boot state.
 	game.state.start("Boot");

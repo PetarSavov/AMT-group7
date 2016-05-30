@@ -243,5 +243,11 @@
         "key": "background",
         "url": "assets/images/sky.png"
     }],
-    "level2": []
+    "level2": [
+            {
+            "type": "image",
+            "overwrite": false,
+            "key": "back",
+            "url": "assets/images/space.jpg"
+        }]
 }
