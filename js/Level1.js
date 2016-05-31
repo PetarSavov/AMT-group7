@@ -418,7 +418,7 @@ Level1.prototype.spaceshipLiftOff = function(){
         ship.body.collideWorldBounds = false;
 
    //     var temp = this.add.text(2000, 250,'LEVEL COMPLETE');
-        this.time.events.add(Phaser.Timer.SECOND * 9, this.quitGame, this);      
+        this.time.events.add(Phaser.Timer.SECOND * 9, this.nextLevel, this);      
 };
 
 Level1.prototype.teleportPlayer = function(player){
@@ -426,7 +426,7 @@ Level1.prototype.teleportPlayer = function(player){
     player.body.y = 0;
 };
 
-Level1.prototype.quitGame = function() {
+Level1.prototype.nextLevel = function() {
     music.stop();
     this.game.state.start("level2");
 }
