@@ -13,13 +13,13 @@ var ground;
 var ledge;
 var platforms;
 var items;
-var shipparts;
+var shipparts, aliens;
 var catfood;
 var teleportFrom;
 var teleportTo;
 var HEIGHT=600;
 var WIDTH=5000;
-var score =0;
+var score;
 var spaceship, ship;
 var cloud;
 var music;
@@ -29,13 +29,24 @@ var speed = 150;
 var soundIcon;
 var textBubble;
 var launch;
-var count = 0;
-var parts = 6;
+var count;
+var parts;
 var alienSpeed = 50;
-var startLives = 3;
+var startLives;
 var life, lives;
+var lifeBoost, lifeBoosts;
+var pauseMovement;
+var tempBobDead;
+var sunglasses, weapons, shooting;
 
 Level1.prototype.create = function() {
+
+    startLives = 3;
+    parts = 6;
+    count = 0;
+    score =0;
+    pauseMovement = false;
+    shooting = false;
 
     // Calling functions to add everything to the game 
     this.createWorld();
@@ -47,7 +58,10 @@ Level1.prototype.create = function() {
  	this.createCloudLedges();
 	this.createPortals();
 	this.createSpeedBoosts();
+    this.createLifeBoost();
+    this.createShootBoost();
 	this.createHUD();
+
 };
 
 Level1.prototype.createWorld = function(){
@@ -127,15 +141,15 @@ Level1.prototype.createPlayer = function(){
 };
 
 Level1.prototype.createAlien = function() {
+    aliens = this.add.group();
     alien = this.add.sprite(3825, 396, 'alien');
+    aliens.add(alien);
     this.physics.arcade.enable(alien);
     alien.collideWorldBounds = true;
-
     alien.animations.add('left', [0, 1], 10, true);
     alien.animations.add('right', [3, 4], 10, true);
-    alien.frame = 2;
-
-    this.patrol()
+    aliens.enableBody = true;
+    this.patrol();
 
 };
 
@@ -274,6 +288,25 @@ Level1.prototype.addSpeedBoost = function(x, y){
     cookie = speedBoosts.create(x, y, 'cookie');
 };
 
+Level1.prototype.createLifeBoost = function(){
+    lifeBoosts = this.add.group();
+    lifeBoosts.enableBody = true;
+
+    this.addLifeBoost(1365, 155);
+//    this.addLifeBoost(0,0);
+};
+
+Level1.prototype.addLifeBoost = function(x, y){
+    lifeBoost = lifeBoosts.create(x, y, 'life');
+};
+
+Level1.prototype.createShootBoost = function(){
+    weapons = this.add.group();
+    weapons.enableBody = true;
+
+    sunglasses = weapons.create(2685, 20, 'sunglasses');
+}
+
 Level1.prototype.createHUD = function(){
 
     // Set up scoreText
@@ -301,14 +334,16 @@ Level1.prototype.createHUD = function(){
 };
 
 Level1.prototype.createLifeHUD = function(startLives){
-    lives = this.add.group();
     var tempY = 500-(32*5)/2;
-    for(var i = 0; i < 3; i++){
+    lives = this.add.group();
+
+
+    for(var i = 0; i < startLives; i++){
         life = lives.create(tempY, 16, 'life');
         life.fixedToCamera = true;
         tempY+=32;
     }
-    for(var i = 0; i < 2; i++){
+    for(var i = 0; i < 5 - startLives; i++){
         life = lives.create(tempY, 16, 'noLife');
         life.fixedToCamera = true;
         tempY+=32;
@@ -338,6 +373,8 @@ Level1.prototype.update = function() {
     this.physics.arcade.collide(player, platforms);
 
     player.body.velocity.x = 0;
+
+    if(pauseMovement == false){
 
     if (cursors.left.isDown)
     {
@@ -370,6 +407,7 @@ Level1.prototype.update = function() {
     {
         player.body.velocity.y = -350;
     }
+    }
 
     if (alien.body.velocity.x>0 && alien.x>4080-66 || alien.body.velocity.x<0 && alien.x<3825){
             alien.body.velocity.x*=-1;
@@ -381,12 +419,15 @@ Level1.prototype.update = function() {
         }
 
     // Add collision detection in the game here. 
-    this.physics.arcade.collide(items, shipparts, platforms, teleportFrom);
+    this.physics.arcade.collide(items, shipparts, platforms, teleportFrom, aliens, lifeBoosts, weapons);
     this.physics.arcade.overlap(player, items, this.collectItem, null, this);
     this.physics.arcade.overlap(player, shipparts, this.collectShip, null, this);
     this.physics.arcade.overlap(player, speedBoosts, this.collectSpeedBoost, null, this);
     this.physics.arcade.overlap(player, brokenShip, this.talkBubble, null, this);
     this.physics.arcade.overlap(player, teleportFrom, this.teleportPlayer, null, this);
+    this.physics.arcade.overlap(player, aliens, this.looseLife, null, this);
+    this.physics.arcade.overlap(player, lifeBoosts, this.gainLife, null, this);
+    this.physics.arcade.overlap(player, weapons, this.shootingEnabled, null, this);
 };
 
 Level1.prototype.addToScore = function(amount){
@@ -401,9 +442,6 @@ Level1.prototype.collectItem = function(player, item){
 
     // Add and update the score
     this.addToScore(10);
-    var temp = lives.getAt(1);
-    temp.loadTexture('life');
-    lives.addAt(1,temp);
 };
 
 Level1.prototype.collectShip = function(player, item){
@@ -429,12 +467,20 @@ Level1.prototype.normalSpeed = function(){
 	speed = 150;
 };
 
+Level1.prototype.shootingEnabled = function(player, item){
+    player.loadTexture('bobby-shoot');
+    shooting = true;
+    item.kill();
+    this.addToScore(125);
+}
+
 Level1.prototype.talkBubble = function(player, item){
     if(count == 0 && parts !=0){
     	textBubble.visible = true;
     	partsText.visible = true;     
      	textBubble.animations.play('talk');
     	textBubble.animations.currentAnim.onComplete.add(this.removeBubble, this);
+        count++;
     }
     else if(parts==0 && count !=0){
         textBubble.visible = true;
@@ -443,7 +489,7 @@ Level1.prototype.talkBubble = function(player, item){
         this.time.events.add(Phaser.Timer.SECOND * 9, this.newSpaceship, this);
     }
     
-    count++;
+ 
 };
 
 Level1.prototype.removeBubble = function(){
@@ -470,13 +516,83 @@ Level1.prototype.spaceshipLiftOff = function(){
         ship.body.velocity.y = -50;
         ship.body.collideWorldBounds = false;
 
-   //     var temp = this.add.text(2000, 250,'LEVEL COMPLETE');
         this.time.events.add(Phaser.Timer.SECOND * 9, this.nextLevel, this);      
 };
 
 Level1.prototype.teleportPlayer = function(player){
 	player.body.x = 1750;
     player.body.y = 0;
+
+};
+
+Level1.prototype.looseLife = function(){
+        var tempY = 500-(32*5)/2;
+        var temp = 550-18;
+
+        lives.destroy();
+        player.body.x -= 300;
+        player.body.y = 550-67;
+        pauseMovement = true;
+
+        player.kill();
+
+        tempBobDead = this.add.sprite(player.body.x, temp, 'bobby-dead');
+              
+    lives = this.add.group();
+     
+     if(startLives > 0)
+            startLives--;
+
+    for(var i = 0; i < startLives; i++){
+        life = lives.create(tempY, 16, 'life');
+        life.fixedToCamera = true;
+        tempY+=32;
+    }
+    for(var i = 0; i < 5 - startLives; i++){
+        life = lives.create(tempY, 16, 'noLife');
+        life.fixedToCamera = true;
+        tempY+=32;
+    }
+
+            if (startLives == 0)
+            this.time.events.add(Phaser.Timer.SECOND * 3, this.restartLevel, this);
+        else
+            this.time.events.add(Phaser.Timer.SECOND * 3, this.restartMovement, this);
+};
+
+Level1.prototype.gainLife = function(player, item){
+    item.kill();
+
+        var tempY = 500-(32*5)/2;
+
+        lives.destroy();
+
+    lives = this.add.group();
+     
+     if(startLives < 5)
+            startLives++;
+
+    for(var i = 0; i < startLives; i++){
+        life = lives.create(tempY, 16, 'life');
+        life.fixedToCamera = true;
+        tempY+=32;
+    }
+    for(var i = 0; i < 5 - startLives; i++){
+        life = lives.create(tempY, 16, 'noLife');
+        life.fixedToCamera = true;
+        tempY+=32;
+    }
+};
+
+Level1.prototype.restartMovement = function(){
+    tempBobDead.destroy();
+    player.reset(player.body.x, 550-67);
+    pauseMovement = false;
+
+};
+
+Level1.prototype.restartLevel = function() {
+    this.game.state.start("Level1");
 };
 
 Level1.prototype.nextLevel = function() {
