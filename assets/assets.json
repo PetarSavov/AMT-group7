@@ -13,14 +13,24 @@
     }],
     "level1": [
         {
-            "frameHeight": 0,
+            "frameHeight": 54,
             "margin": 0,
-            "frameWidth": 0,
+            "frameWidth": 66,
             "spacing": 0,
             "frameMax": -1,
             "type": "spritesheet",
-            "key": "alien sprite",
-            "url": "assets/images/alien sprite.png"
+            "key": "alien",
+            "url": "assets/images/alien.png"
+        },
+        {
+            "frameHeight": 67,
+            "margin": 0,
+            "frameWidth": 37,
+            "spacing": 0,
+            "frameMax": -1,
+            "type": "spritesheet",
+            "key": "bobby-shoot",
+            "url": "assets/images/bobby-shoot.png"
         },
         {
             "frameHeight": 67,
@@ -73,7 +83,19 @@
             "key": "teleport",
             "url": "assets/images/teleport sprite.png"
         },
-
+        
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "life",
+            "url": "assets/images/life.png"
+        },
+        {
+            "type": "image",
+            "overwrite": false,
+            "key": "noLife",
+            "url": "assets/images/noLife.png"
+        },
         {
             "type": "image",
             "overwrite": false,
@@ -214,8 +236,7 @@
         },
         {
             "urls": [
-                "assets/audio/Launch.ogg",
-                "assets/audio/Launch.mp3"
+                "assets/audio/Launch.ogg"
             ],
             "autoDecode": true,
             "type": "audio",
@@ -223,8 +244,7 @@
         },
         {
             "urls": [
-                "assets/audio/Space.mp3",
-                "assets/audio/Space.ogg"
+                "assets/audio/Space1.ogg"
             ],
             "autoDecode": true,
             "type": "audio",
@@ -248,6 +268,6 @@
             "type": "image",
             "overwrite": false,
             "key": "back",
-            "url": "assets/images/space.jpg"
+            "url": "assets/images/space.png"
         }]
 }

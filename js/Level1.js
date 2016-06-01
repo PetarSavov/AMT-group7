@@ -31,6 +31,9 @@ var textBubble;
 var launch;
 var count = 0;
 var parts = 6;
+var alienSpeed = 50;
+var startLives = 3;
+var life, lives;
 
 Level1.prototype.create = function() {
 
@@ -38,6 +41,7 @@ Level1.prototype.create = function() {
     this.createWorld();
     this.createBrokenShip(2050, 400);
     this.createPlayer();
+    this.createAlien();
     this.createTalkBubble();
     this.createItems();
  	this.createCloudLedges();
@@ -121,6 +125,23 @@ Level1.prototype.createPlayer = function(){
     // Setting the camera to follow the player around the map.
     this.camera.follow(player);
 };
+
+Level1.prototype.createAlien = function() {
+    alien = this.add.sprite(3825, 396, 'alien');
+    this.physics.arcade.enable(alien);
+    alien.collideWorldBounds = true;
+
+    alien.animations.add('left', [0, 1], 10, true);
+    alien.animations.add('right', [3, 4], 10, true);
+    alien.frame = 2;
+
+    this.patrol()
+
+};
+
+Level1.prototype.patrol = function(){
+    alien.body.velocity.x = alienSpeed;
+}
 
 Level1.prototype.createTalkBubble = function(){
  	textBubble = this.add.sprite(player.x + 500, player.y - 60, 'bubble');
@@ -259,6 +280,11 @@ Level1.prototype.createHUD = function(){
     scoreText = this.add.text(16, 16, 'Score: ' + score, { fontSize: '24px', fill: '#000'});
     scoreText.fixedToCamera =true;
 
+    // Set up the life HUD
+    this.createLifeHUD(startLives);
+
+
+    // Adds the mute/unmute button to the right upper corner of the screen
     soundIcon = this.add.sprite(960, 16, 'volume');
     soundIcon.inputEnabled = true;
     soundIcon.fixedToCamera = true;
@@ -272,6 +298,21 @@ Level1.prototype.createHUD = function(){
     music.play();
 
     cursors = this.input.keyboard.createCursorKeys();
+};
+
+Level1.prototype.createLifeHUD = function(startLives){
+    lives = this.add.group();
+    var tempY = 500-(32*5)/2;
+    for(var i = 0; i < 3; i++){
+        life = lives.create(tempY, 16, 'life');
+        life.fixedToCamera = true;
+        tempY+=32;
+    }
+    for(var i = 0; i < 2; i++){
+        life = lives.create(tempY, 16, 'noLife');
+        life.fixedToCamera = true;
+        tempY+=32;
+    }
 };
 
 Level1.prototype.listener = function() {
@@ -330,6 +371,15 @@ Level1.prototype.update = function() {
         player.body.velocity.y = -350;
     }
 
+    if (alien.body.velocity.x>0 && alien.x>4080-66 || alien.body.velocity.x<0 && alien.x<3825){
+            alien.body.velocity.x*=-1;
+            if(alien.body.velocity.x>0)
+                alien.animations.play('right');
+            else
+                alien.animations.play('left');
+            
+        }
+
     // Add collision detection in the game here. 
     this.physics.arcade.collide(items, shipparts, platforms, teleportFrom);
     this.physics.arcade.overlap(player, items, this.collectItem, null, this);
@@ -351,6 +401,9 @@ Level1.prototype.collectItem = function(player, item){
 
     // Add and update the score
     this.addToScore(10);
+    var temp = lives.getAt(1);
+    temp.loadTexture('life');
+    lives.addAt(1,temp);
 };
 
 Level1.prototype.collectShip = function(player, item){
