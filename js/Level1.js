@@ -9,35 +9,31 @@ var proto = Object.create(Phaser.State);
 Level1.prototype = proto;
 
 var background, player, cursors;
-var ground;
-var ledge;
-var platforms;
-var items;
-var shipparts, aliens;
-var catfood;
-var teleportFrom;
-var teleportTo;
-var HEIGHT=600;
-var WIDTH=5000;
+var platforms, ledge, ground;
+var items, catfood;
+var spaceship, shipparts, parts;
+var teleportFrom, teleportTo;
 var score;
-var spaceship, ship;
+var aliens, ship;
 var cloud;
 var music;
-var speedBoosts;
-var cookies;
-var speed = 150;
+var cookies, speedBoosts;
 var soundIcon;
 var textBubble;
 var launch;
 var count;
-var parts;
-var alienSpeed = 50;
 var startLives;
 var life, lives;
 var lifeBoost, lifeBoosts;
 var pauseMovement;
 var tempBobDead;
 var sunglasses, weapons, shooting;
+var bullet, bullets;
+
+var speed = 150;
+var HEIGHT=600;
+var WIDTH=5000;
+var alienSpeed = 50;
 
 Level1.prototype.create = function() {
 
@@ -60,6 +56,7 @@ Level1.prototype.create = function() {
 	this.createSpeedBoosts();
     this.createLifeBoost();
     this.createShootBoost();
+    this.createBullet();
 	this.createHUD();
 
 };
@@ -305,7 +302,12 @@ Level1.prototype.createShootBoost = function(){
     weapons.enableBody = true;
 
     sunglasses = weapons.create(2685, 20, 'sunglasses');
-}
+};
+
+Level1.prototype.createBullet = function(){
+    bullets = this.add.group();
+    bullets.enableBody = true;
+};
 
 Level1.prototype.createHUD = function(){
 
@@ -376,47 +378,47 @@ Level1.prototype.update = function() {
 
     if(pauseMovement == false){
 
-    if (cursors.left.isDown)
-    {
-        // Move to the left
-        player.body.velocity.x = -speed;
-        player.animations.play('left');
-        var temp= WIDTH-500;
-        if(player.x >=500)
-        background.tilePosition.x +=2; // Make the background move.
+        if (cursors.left.isDown){
+            // Move to the left
+            player.body.velocity.x = -speed;
+            player.animations.play('left');
+            var temp= WIDTH-500;
+            if(player.x >=500)
+            background.tilePosition.x +=2; // Make the background move.
+        }
+
+        else if (cursors.right.isDown){
+            // Move to the right
+            player.body.velocity.x = speed;
+            player.animations.play('right');
+            if(player.x <= 4500 )
+            background.tilePosition.x -=2;
+        }
         
+        else{
+            // Stand still
+            player.animations.stop();
+            player.frame = 4;
+        }
 
-    }
-    else if (cursors.right.isDown)
-    {
-        // Move to the right
-        player.body.velocity.x = speed;
-        player.animations.play('right');
-        if(player.x <= 4500 )
-        background.tilePosition.x -=2;
-    }
-    else
-    {
-        // Stand still
-        player.animations.stop();
-        player.frame = 4;
-    }
-
-    // Allow the player to jump if they are touching the ground
-    if (cursors.up.isDown && player.body.touching.down)
-    {
-        player.body.velocity.y = -350;
-    }
+        // Allow the player to jump if they are touching the ground
+        if (cursors.up.isDown && player.body.touching.down){
+            player.body.velocity.y = -350;
+        }
     }
 
     if (alien.body.velocity.x>0 && alien.x>4080-66 || alien.body.velocity.x<0 && alien.x<3825){
-            alien.body.velocity.x*=-1;
-            if(alien.body.velocity.x>0)
-                alien.animations.play('right');
-            else
-                alien.animations.play('left');
-            
-        }
+        alien.body.velocity.x*=-1;
+        
+        if(alien.body.velocity.x>0)
+            alien.animations.play('right');
+        else
+            alien.animations.play('left');
+    }
+
+    if(shooting == true){
+
+    }
 
     // Add collision detection in the game here. 
     this.physics.arcade.collide(items, shipparts, platforms, teleportFrom, aliens, lifeBoosts, weapons);
@@ -522,7 +524,6 @@ Level1.prototype.spaceshipLiftOff = function(){
 Level1.prototype.teleportPlayer = function(player){
 	player.body.x = 1750;
     player.body.y = 0;
-
 };
 
 Level1.prototype.looseLife = function(){
