@@ -8,7 +8,7 @@ function Level1() {
 var proto = Object.create(Phaser.State);
 Level1.prototype = proto;
 
-var background, player, cursors;
+var background, player, cursors, spaceKey;
 var platforms, ledge, ground;
 var items, catfood;
 var spaceship, shipparts, parts;
@@ -28,7 +28,7 @@ var lifeBoost, lifeBoosts;
 var pauseMovement;
 var tempBobDead;
 var sunglasses, weapons, shooting;
-var bullet, bullets;
+var bullet, bullets, bulletTime;
 
 var speed = 150;
 var HEIGHT=600;
@@ -307,6 +307,13 @@ Level1.prototype.createShootBoost = function(){
 Level1.prototype.createBullet = function(){
     bullets = this.add.group();
     bullets.enableBody = true;
+
+    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+    bullets.createMultiple(10, 'bullet');
+    bullets.callAll('events.onOutOfBounds.add', 'events.onOutOfBounds', this.resetBullet, this);
+    bullets.setAll('checkWorldBounds', true);
+
 };
 
 Level1.prototype.createHUD = function(){
@@ -333,6 +340,8 @@ Level1.prototype.createHUD = function(){
     music.play();
 
     cursors = this.input.keyboard.createCursorKeys();
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    this.input.keyboard.addKeyCapture(Phaser.Keyboard.SPACEBAR);
 };
 
 Level1.prototype.createLifeHUD = function(startLives){
@@ -416,8 +425,8 @@ Level1.prototype.update = function() {
             alien.animations.play('left');
     }
 
-    if(shooting == true){
-
+    if(shooting == true && this.spaceKey.isDown){
+        this.fireBullet();
     }
 
     // Add collision detection in the game here. 
@@ -474,6 +483,32 @@ Level1.prototype.shootingEnabled = function(player, item){
     shooting = true;
     item.kill();
     this.addToScore(125);
+
+
+}
+
+
+Level1.prototype.fireBullet = function() {
+
+    if (this.time.now > bulletTime)
+    {
+        bullet = bullets.getFirstExists(false);
+
+        if (bullet)
+        {
+            bullet.reset(player.x + 6, player.y - 8);
+            bullet.body.velocity.x = 300;
+            bulletTime = this.time.now + 250;
+        }
+    }
+
+}
+
+//  Called if the bullet goes out of the screen
+Level1.prototype.resetBullet = function(bullet) {
+
+    bullet.kill();
+
 }
 
 Level1.prototype.talkBubble = function(player, item){
@@ -490,8 +525,6 @@ Level1.prototype.talkBubble = function(player, item){
         textBubble.animations.play('end');
         this.time.events.add(Phaser.Timer.SECOND * 9, this.newSpaceship, this);
     }
-    
- 
 };
 
 Level1.prototype.removeBubble = function(){
