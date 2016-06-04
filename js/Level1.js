@@ -21,7 +21,7 @@ var cookies, speedBoosts;
 var soundIcon;
 var textBubble;
 var launch;
-var count;
+var count =0;
 var startLives;
 var life, lives;
 var lifeBoost, lifeBoosts;
@@ -39,7 +39,7 @@ Level1.prototype.create = function() {
 
     startLives = 3;
     parts = 6;
-    count = 0;
+//    count = 0;
     score =0;
     pauseMovement = false;
     shooting = false;
@@ -58,6 +58,7 @@ Level1.prototype.create = function() {
     this.createShootBoost();
     this.createBullet();
 	this.createHUD();
+    this.createFeedBackAudio();
 
 };
 
@@ -74,11 +75,11 @@ Level1.prototype.createWorld = function(){
     platforms.enableBody = true;
 
     // Here we create the ground.
-    var count= 0;
-    for(var i =1; i<=WIDTH/1000;i++){
-        ground = platforms.create(count, this.world.height - 49, 'ground');
+    var size= 0;
+    for(var i =0; i < WIDTH/1000; i++){
+        ground = platforms.create(size, this.world.height - 49, 'ground');
         ground.body.immovable = true;
-        count +=1000;
+        size +=1000;
     }
 
 
@@ -103,7 +104,7 @@ Level1.prototype.createWorld = function(){
 
 Level1.prototype.createLedge = function(x, y, stones){
 
-	for(var i=1;i<=stones;i++){ 
+	for(var i = 0; i < stones; i++){ 
         ledge = platforms.create(x,y,'stone');
         ledge.body.immovable = true;
         x+=50;
@@ -115,7 +116,6 @@ Level1.prototype.createBrokenShip = function(x, y){
    	brokenShip.enableBody = true;
 
     ship = brokenShip.create(x, y, 'brokenShip');
-   	ship.enableBody = true;
 };
 
 Level1.prototype.createPlayer = function(){
@@ -140,18 +140,19 @@ Level1.prototype.createPlayer = function(){
 Level1.prototype.createAlien = function() {
     aliens = this.add.group();
     alien = this.add.sprite(3825, 396, 'alien');
+    
+
     aliens.add(alien);
     this.physics.arcade.enable(alien);
-    alien.collideWorldBounds = true;
     alien.animations.add('left', [0, 1], 10, true);
     alien.animations.add('right', [3, 4], 10, true);
     aliens.enableBody = true;
     this.patrol();
-
 };
 
 Level1.prototype.patrol = function(){
     alien.body.velocity.x = alienSpeed;
+    //
 }
 
 Level1.prototype.createTalkBubble = function(){
@@ -181,16 +182,16 @@ Level1.prototype.createItems = function(){
 
 Level1.prototype.createCurvedGroup = function(x, y, length, spacing){
 
-    var temp= length/2;
+    var temp = length/2;
     var ySpacing = 35;
 
-    if(length%2 ==0){
-        for(var i =1; i<temp;i++){
+    if(length%2 == 0){
+        for(var i = 1; i < temp; i++){
             catfood = items.create(x,y,'catfood');
             x += spacing;
             y -= ySpacing;
         }
-        for(var i = 1; i <3; i++){
+        for(var i = 1; i < 3; i++){
             catfood = items.create(x,y, 'catfood');
             x += spacing;
         }
@@ -207,7 +208,7 @@ Level1.prototype.createCurvedGroup = function(x, y, length, spacing){
             x += spacing;
             y -= ySpacing;
         }
-        for(var i = 1; i <=3; i++){
+        for(var i = 1; i <= 3; i++){
             catfood = items.create(x,y, 'catfood');
             x += spacing;
         }
@@ -259,15 +260,14 @@ Level1.prototype.createPortals = function(){
 Level1.prototype.createFromPortal = function(x,y){
     teleportFrom = this.add.group();
     teleportFrom.enableBody=true;
-    teleportA=teleportFrom.create(x,y,'teleport');
+    teleportA = teleportFrom.create(x,y,'teleport');
     teleportA.animations.add('swirl', [0, 1, 2, 3, 4, 5], 2, true);
     teleportA.animations.play('swirl');
 };
 
 //create the portal to where the player will be teleported
 Level1.prototype.createToPortal = function(x,y){ 
-    teleportTo= this.add.group();
-    teleportB = teleportTo.create(x, y, 'teleport');
+    teleportB = this.add.sprite(x, y, 'teleport');
     teleportB.animations.add('swirl', [0, 1, 2, 3, 4, 5], 2, true);
     teleportB.animations.play('swirl');
 };
@@ -365,14 +365,18 @@ Level1.prototype.listener = function() {
 
     if(music.mute == false){
         music.mute = true;
-        soundIcon.loadTexture('mute', 0);    
+        soundIcon.loadTexture('mute');    
     } 
     else{
         music.mute = false;
-        soundIcon.loadTexture('volume', 0);
+        soundIcon.loadTexture('volume');
     }
 };
 
+Level1.prototype.createFeedBackAudio = function(){
+    // Tilføj lydfilernene til de forskellige feedbacks
+
+}
 
 Level1.prototype.update = function() {
 
@@ -391,7 +395,7 @@ Level1.prototype.update = function() {
             // Move to the left
             player.body.velocity.x = -speed;
             player.animations.play('left');
-            var temp= WIDTH-500;
+
             if(player.x >=500)
             background.tilePosition.x +=2; // Make the background move.
         }
@@ -400,7 +404,7 @@ Level1.prototype.update = function() {
             // Move to the right
             player.body.velocity.x = speed;
             player.animations.play('right');
-            if(player.x <= 4500 )
+            if(player.x <= WIDTH-500 )
             background.tilePosition.x -=2;
         }
         
@@ -430,7 +434,7 @@ Level1.prototype.update = function() {
     }
 
     // Add collision detection in the game here. 
-    this.physics.arcade.collide(items, shipparts, platforms, teleportFrom, aliens, lifeBoosts, weapons);
+    this.physics.arcade.collide(items, platforms);
     this.physics.arcade.overlap(player, items, this.collectItem, null, this);
     this.physics.arcade.overlap(player, shipparts, this.collectShip, null, this);
     this.physics.arcade.overlap(player, speedBoosts, this.collectSpeedBoost, null, this);
@@ -448,8 +452,8 @@ Level1.prototype.addToScore = function(amount){
 
 Level1.prototype.collectItem = function(player, item){
 
-    // Removes the star from the screen
-    item.kill();
+    // Removes the item from the screen
+    item.destroy();
 
     // Add and update the score
     this.addToScore(10);
@@ -458,7 +462,7 @@ Level1.prototype.collectItem = function(player, item){
 Level1.prototype.collectShip = function(player, item){
 
     // Removes the item from the screen
-    item.kill();
+    item.destroy();
 
     // Add and update the score
     this.addToScore(50);
@@ -467,7 +471,7 @@ Level1.prototype.collectShip = function(player, item){
 };
 
 Level1.prototype.collectSpeedBoost = function(player, item){
-	item.kill();
+	item.destroy();
 
     this.time.events.add(Phaser.Timer.SECOND * 4, this.normalSpeed, this);
     speed *= 3;
@@ -481,7 +485,7 @@ Level1.prototype.normalSpeed = function(){
 Level1.prototype.shootingEnabled = function(player, item){
     player.loadTexture('bobby-shoot');
     shooting = true;
-    item.kill();
+    item.destroy();
     this.addToScore(125);
 
 
@@ -521,7 +525,6 @@ Level1.prototype.talkBubble = function(player, item){
     }
     else if(parts==0 && count !=0){
         textBubble.visible = true;
-        partsText.visible = true;
         textBubble.animations.play('end');
         this.time.events.add(Phaser.Timer.SECOND * 9, this.newSpaceship, this);
     }
@@ -545,11 +548,11 @@ Level1.prototype.spaceshipLiftOff = function(){
         this.physics.arcade.enable(ship);
         ship.animations.add('liftof',[0, 1, 2], 5, true);
         ship.animations.play('liftof');
+        music.mute = true;
         launch = this.add.audio('launch');
         launch.play();
 
         ship.body.velocity.y = -50;
-        ship.body.collideWorldBounds = false;
 
         this.time.events.add(Phaser.Timer.SECOND * 9, this.nextLevel, this);      
 };
@@ -561,7 +564,7 @@ Level1.prototype.teleportPlayer = function(player){
 
 Level1.prototype.looseLife = function(){
         var tempY = 500-(32*5)/2;
-        var temp = 550-18;
+        var temp = 550-18; // Place dead Bob on ground
 
         lives.destroy();
         player.body.x -= 300;
@@ -595,16 +598,14 @@ Level1.prototype.looseLife = function(){
 };
 
 Level1.prototype.gainLife = function(player, item){
-    item.kill();
+    item.destroy();
 
         var tempY = 500-(32*5)/2;
-
-        lives.destroy();
-
-    lives = this.add.group();
-     
-     if(startLives < 5)
+    
+     if(startLives < 5){
             startLives++;
+            lives.destroy();
+            lives = this.add.group();
 
     for(var i = 0; i < startLives; i++){
         life = lives.create(tempY, 16, 'life');
@@ -615,6 +616,7 @@ Level1.prototype.gainLife = function(player, item){
         life = lives.create(tempY, 16, 'noLife');
         life.fixedToCamera = true;
         tempY+=32;
+    }
     }
 };
 
